@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vysavač Moudrosti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f4e4c1 0%, #e8d4b8 50%, #dfc4a0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.bg-vacs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.bg-vacs svg { position: absolute; }
+.main {
+  position: relative; z-index: 1;
+  max-width: 700px; width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3.5rem;
+}
+.logo-title {
+  font-size: 16px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #e07b3c;
+}
+.quote-area {
+  text-align: center; min-height: 280px;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+}
+.quote-inner { transition: opacity 0.28s ease, transform 0.28s ease; }
+.quote-inner.hidden { opacity: 0; transform: translateY(8px); }
+.quote-text {
+  font-family: 'Lora', serif;
+  font-size: 32px; line-height: 1.9;
+  color: #2d2416; font-style: italic;
+  margin-bottom: 1.5rem;
+}
+.quote-author {
+  font-size: 16px; color: #a0836a;
+  font-weight: 600; letter-spacing: 0.03em;
+}
+.buttons { display: flex; gap: 12px; align-items: center; }
+.btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  padding: 14px 36px;
+  cursor: pointer; border: none;
+  transition: transform 0.12s, background 0.15s;
+}
+.btn:active { transform: scale(0.96); }
+.btn-back { background: #f0e8de; color: #a0836a; }
+.btn-back:hover { background: #e8ddd2; }
+.btn-back:disabled { opacity: 0.35; cursor: default; }
+.btn-next { background: #e07b3c; color: #fff; }
+.btn-next:hover { background: #cb6e34; }
+.counter { font-size: 13px; color: #c4aa94; letter-spacing: 0.1em; }
+@media (max-width: 520px) { .quote-text { font-size: 26px; } }
+</style>
+</head>
+<body>
+
+<div class="bg-vacs">
+  <!-- Hlavní vysavač na pozadí -->
+  <svg width="400" height="500" viewBox="0 0 400 500" style="top:50%;left:-80px;opacity:0.12;transform:translate(0, -50%) rotate(-25deg)" xmlns="http://www.w3.org/2000/svg">
+    <!-- Korpus vysavače -->
+    <ellipse cx="200" cy="150" rx="110" ry="80" fill="#e07b3c"/>
+    <rect x="140" y="220" width="30" height="100" rx="15" fill="#e07b3c"/>
+    <rect x="230" y="220" width="30" height="100" rx="15" fill="#e07b3c"/>
+    
+    <!-- Pedály/kolečka -->
+    <circle cx="160" cy="340" r="25" fill="#8b5a2b"/>
+    <circle cx="240" cy="340" r="25" fill="#8b5a2b"/>
+    
+    <!-- Rukojeť -->
+    <line x1="200" y1="80" x2="180" y2="20" stroke="#2d2416" stroke-width="18" stroke-linecap="round"/>
+    <circle cx="180" cy="15" r="12" fill="#2d2416"/>
+    
+    <!-- Sací hlava -->
+    <rect x="160" y="320" width="80" height="35" rx="17" fill="#d46a2a"/>
+    <rect x="165" y="355" width="70" height="10" fill="#6b4423"/>
+    <line x1="170" y1="360" x2="170" y2="385" stroke="#6b4423" stroke-width="3"/>
+    <line x1="185" y1="360" x2="185" y2="385" stroke="#6b4423" stroke-width="3"/>
+    <line x1="200" y1="360" x2="200" y2="385" stroke="#6b4423" stroke-width="3"/>
+    <line x1="215" y1="360" x2="215" y2="385" stroke="#6b4423" stroke-width="3"/>
+    <line x1="230" y1="360" x2="230" y2="385" stroke="#6b4423" stroke-width="3"/>
+    
+    <!-- Filtr/mřížka -->
+    <circle cx="200" cy="140" r="50" fill="none" stroke="#2d2416" stroke-width="3" opacity="0.6"/>
+    <line x1="160" y1="140" x2="240" y2="140" stroke="#2d2416" stroke-width="2" opacity="0.6"/>
+    <line x1="200" y1="100" x2="200" y2="180" stroke="#2d2416" stroke-width="2" opacity="0.6"/>
+    
+    <!-- Okno na sáček -->
+    <rect x="185" y="110" width="30" height="60" rx="5" fill="#f0e8de" opacity="0.7" stroke="#2d2416" stroke-width="2"/>
+  </svg>
+
+  <!-- Doplňkový malý vysavač -->
+  <svg width="300" height="350" viewBox="0 0 300 350" style="bottom:-40px;right:-60px;opacity:0.08;transform:rotate(15deg)" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="150" cy="110" rx="85" ry="65" fill="#e07b3c"/>
+    <rect x="105" y="170" width="25" height="80" rx="12" fill="#e07b3c"/>
+    <rect x="170" y="170" width="25" height="80" rx="12" fill="#e07b3c"/>
+    <circle cx="120" cy="270" r="20" fill="#8b5a2b"/>
+    <circle cx="180" cy="270" r="20" fill="#8b5a2b"/>
+    <line x1="150" y1="50" x2="135" y2="10" stroke="#2d2416" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="135" cy="8" r="10" fill="#2d2416"/>
+  </svg>
+</div>
+
+<div class="main">
+  <div class="logo-title">&#10022; Vysavač Moudrosti &#10022;</div>
+
+  <div class="quote-area">
+    <div class="quote-inner" id="qi">
+      <p class="quote-text" id="qt"></p>
+      <p class="quote-author" id="qa"></p>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+    <div class="buttons">
+      <button class="btn btn-back" id="btnBack" disabled>&#8592; zpátky</button>
+      <button class="btn btn-next" id="btnNext">další &#8594;</button>
+    </div>
+    <div class="counter" id="ctr"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var Q = [
+    ["Co tě nezabije, to ti ucpe hubici.", "(Friedrich Nietzsche o vysávání velkých kusů Lega)"],
+    ["Chybovat je lidské, ale pořádně ucpat hadici ponožkou, k tomu už je potřeba vysavač.", "(Alexander Pope, Esej o kritice úklidu)"],
+    ["Život je jako jízda na kole. Abyste udrželi rovnováhu, musíte se neustále pohybovat — a to platí i pro hubici na koberci.", "(Albert Einstein, Teorie relativity úklidu)"],
+    ["Jediný způsob, jak dělat skvělou práci, je milovat to, co děláte. I když je to zrovna čištění rotačního kartáče od dlouhých vlasů.", "(Steve Jobs, Projev na Stanfordu o domácích pracích)"],
+    ["Temná strana Síly je cesta k mnoha schopnostem, které někteří považují za nepřirozené — například vysát auto bez bezdrátového adaptéru.", "(Kancléř Palpatine, Star Wars Epizoda III)"],
+    ["Kdo ovládá minulost, ovládá budoucnost. Kdo ovládá rukojeť vysavače, ovládá čistotu v domě.", "(George Orwell, 1984 v obýváku)"],
+    ["„Miluji vůni čerstvě vysátého koberce po ránu.“", "(lidová moudrost, autor neznámý)"],
+    ["Oko za oko a svět bude slepý. Filtr za filtr a vysavač bude zase sát.", "(Mahátma Gándhí, Příběh mého experimentu s prachem)"],
+    ["Všichni jsme jen loutky v divadle světa, ale někteří z nás u toho aspoň drží v ruce teleskopickou tyč.", "(William Shakespeare)"],
+    ["Lepší shořet než vyhasnout. A lepší vyklepat filtr než spálit motor.", "(Kurt Cobain o údržbě domácích spotřebičů)"],
+    ["Mluvte tiše a noste s sebou velký vysavač; dojdete daleko.", "(Theodore Roosevelt o diplomatickém řešení rodinného úklidu)"],
+    ["Když se podíváš do propasti, propast se podívá do tebe. Když se podíváš pod gauč, radši okamžitě zapni turbo režim.", "(Friedrich Nietzsche, Mimo dobro a prach)"],
+    ["Úspěch je schopnost jít od jednoho neuklizeného pokoje k druhému bez ztráty nadšení.", "(Winston Churchill)"],
+    ["Nikdy v dějinách lidských konfliktů nevděčilo tak mnoho lidí za tak mnoho jedinému plnému sáčku do vysavače.", "(Winston Churchill po sobotní bitvě s prachem)"],
+    ["Všechno, co slyšíme, je názor, nikoli fakta. Všechno, co vidíme na podlaze, jsou drobky, nikoli čistota.", "(Marcus Aurelius, Meditace s hubicí v ruce)"],
+    ["Dva dny v roce nemůžeme udělat vůbec nic. Jedním je včerejšek a druhým zítřek. Proto musíme ten koberec vysát dnes.", "(Dalajláma o prokrastinaci při domácích pracích)"],
+    ["Dvakrát nevstoupíš do téže místnosti, aniž bys v ní nenašel nový prach.", "(Hérakleitos o nekonečném koloběhu úklidu)"],
+    ["Geniální vysavač je 1 % inspirace a 99 % sacího výkonu.", "(Thomas A. Edison)"],
+    ["Je to malý krok pro člověka, ale obrovský skok pro čistotu lidstva.", "(Neil Armstrong při prvním sešlápnutí pedálu na zapnutí vysavače)"],
+    ["Pravda vítězí. Ale dá to sakra práci, když je všude koberec s vysokým vlasem.", "(Tomáš Garrigue Masaryk)"],
+    ["Cogito, ergo aspiro. Myslím, tedy vysávám.", "(René Descartes, Principy filosofie domácnosti)"],
+    ["Dej mi pevný bod, dost dlouhý nástavec a pohnu celým obývacím pokojem.", "(Archimédés o ergonomii vysavačových hadic)"],
+    ["Nejdříve si musíš uklidit vlastní pokoj, a teprve pak se starat o pořádek ve světě.", "(Immanuel Kant, Kritika čistého rozumu i gruntování)"],
+    ["Bůh je mrtev. A koberec v jeho pokoji nebyl vysátý od roku 1882.", "(Friedrich Nietzsche, Radostná věda)"],
+    ["Veni, vidi, aspiravi. Přišel jsem, uviděl jsem, vysál jsem.", "(Julius Caesar, Commentarii de Gruntování Gallico)"],
+    ["Neusiluj o to, aby ses zdál moudrým. Usiluj o to, aby tvůj koberec byl čistý.", "(Sokrates, zaznamenaný Platónem při úklidu Akademie)"],
+    ["Příroda se děsí prázdnoty. Proto ji hadice vysavače vyhledává jako smysl svého bytí.", "(Aristotelés, Fyzika domácnosti)"],
+    ["Na světě není nic jistého — kromě daní, smrti a prachu, který se vrátí den po vysávání.", "(Benjamin Franklin, autobiografie s přílohami)"],
+    ["Klid je v pořádku. Pořádek je v klidu. Klid začíná Dysonem.", "(Lao-c', Tao Te Gruntování)"],
+    ["Pracuj, jako bys nepotřeboval peníze. Tancuj, jako by se nikdo nedíval. Vysávej, jako by tě za hodinu přišla navštívit tchyně.", "(přísloví, autor neznámý)"],
+    ["Skutečnou cenu poznáme až tehdy, když ji ztratíme — například když se rozbije vysavač v sobotu odpoledne.", "(Oscar Wilde, Být vážným v otázkách úklidu)"],
+    ["Špatnou zprávu přinese i dobrý posel, pokud vstoupí na nevysátý práh.", "(Sun Tzu, Umění vysát)"],
+    ["I cesta dlouhá tisíc mil začíná jedním šlápnutím — a končí vysáním stop z rohožky.", "(Konfucius, Analekty domácího pořádku)"],
+    ["Chaos je přirozeným stavem vesmíru. Dyson je jediný nástroj, který s tím něco dělá.", "(Stephen Hawking, Krátká historie času)"],
+    ["Ryba smrdí od hlavy. A prach se hromadí od rohů.", "(Machiavelli, Vůdce a prach)"],
+    ["Svoboda je pochopena správně teprve tehdy, když člověk musí sám vysát vlastní byt.", "(Jean-Jacques Rousseau, Společenská smlouva o gruntování)"],
+    ["Pokud máš vysavač, použij ho. Pokud ho nemáš, smiř se s prachem, nebo si kup vysavač.", "(Marcus Aurelius, Hovory se sebou i s kobercem)"],
+    ["Chcete-li změnit svět, začněte tím, že si ráno ustelete postel a odpoledne vysajete podlahu.", "(admirál McRaven, přednáška o vojenské kázni)"],
+    ["Mocným nástrojem je ten, kdo umí naslouchat. Ale mocnějším je ten, kdo umí vysávat.", "(Dale Carnegie, Jak získat přátele a vysát je)"],
+    ["Některé koberce nemohou být správně vysáty. Ale to neznamená, že nemají být vysáty správně.", "(Ludwig Wittgenstein, Filosofická zkoumání podlahy)"],
+    ["Veškeré lidské nedůstojnosti pocházejí z jediného: neschopnosti vysát pokoj v tichu a klidu.", "(Blaise Pascal, Myšlenky o prachu a neštěstí)"],
+    ["Přišel jsem, viděl jsem, vysál jsem.", "(Julius Caesar po generálním úklidu obýváku)"],
+    ["Myslím, tedy vysávám.", "(René Descartes o stavu nejvyššího lidského vědomí)"],
+    ["Kostky jsou vrženy. A teď je musím vysát, než na ně někdo šlápne.", "(Julius Caesar při pohledu na nepořádek v dětském pokoji)"],
+    ["Jediné, co vím, je, že nic nevysaju, dokud nevyčistím filtr.", "(Sokrates)"],
+    ["Neptej se na to, co může tvůj vysavač udělat pro tebe, ale co ty můžeš udělat pro svůj vysavač.", "(John F. Kennedy při vysypávání plné sběrné nádoby)"]
+  ];
+
+  var order = [];
+  var pos = -1;
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function buildOrder() {
+    var idx = [];
+    for (var i = 0; i < Q.length; i++) idx.push(i);
+    return shuffle(idx);
+  }
+
+  function render(animate) {
+    var q = Q[order[pos]];
+    var qi = document.getElementById('qi');
+
+    function fill() {
+      document.getElementById('qt').textContent = '\u201E' + q[0] + '\u201C';
+      document.getElementById('qa').textContent = q[1];
+      document.getElementById('ctr').textContent = (pos + 1) + ' / ' + order.length;
+      document.getElementById('btnBack').disabled = (pos === 0);
+      qi.classList.remove('hidden');
+    }
+
+    if (animate) {
+      qi.classList.add('hidden');
+      setTimeout(fill, 290);
+    } else {
+      fill();
+    }
+  }
+
+  document.getElementById('btnNext').addEventListener('click', function() {
+    pos++;
+    if (pos >= order.length) order = order.concat(buildOrder());
+    render(true);
+  });
+
+  document.getElementById('btnBack').addEventListener('click', function() {
+    if (pos > 0) { pos--; render(true); }
+  });
+
+  order = buildOrder();
+  pos = 0;
+  render(false);
+})();
+</script>
+</body>
+</html>
