@@ -131,7 +131,7 @@ body {
 
   <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
     <div class="buttons">
-      <button class="btn btn-back" id="btnBack" disabled>&#8592; zpátky</button>
+      <button class="btn btn-back" id="btnBack">&#8592; zpátky</button>
       <button class="btn btn-next" id="btnNext">další &#8594;</button>
     </div>
     <div class="counter" id="ctr"></div>
@@ -215,7 +215,7 @@ body {
       document.getElementById('qt').textContent = '\u201E' + q[0] + '\u201C';
       document.getElementById('qa').textContent = q[1];
       document.getElementById('ctr').textContent = (pos + 1) + ' / ' + order.length;
-      document.getElementById('btnBack').disabled = (pos === 0);
+
       qi.classList.remove('hidden');
     }
 
@@ -229,12 +229,14 @@ body {
 
   document.getElementById('btnNext').addEventListener('click', function() {
     pos++;
-    if (pos >= order.length) order = order.concat(buildOrder());
+    if (pos >= order.length) pos = 0;
     render(true);
   });
 
   document.getElementById('btnBack').addEventListener('click', function() {
-    if (pos > 0) { pos--; render(true); }
+    pos--;
+    if (pos < 0) pos = order.length - 1;
+    render(true);
   });
 
   order = buildOrder();
